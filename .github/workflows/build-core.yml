@@ -63,7 +63,7 @@ jobs:
           # must query with a token, or will fail with api rate limit on public runners
 
           export RELEASED_VERSIONS=$(curl -sL -H 'Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}'\
-           https://api.github.com/repos/Locietta/xanmod-kernel-WSL2/tags\?per_page\=60 | jq -r '.[].name')
+           https://api.github.com/repos/gotenksIN/xanmod-kernel-WSL2/tags\?per_page\=60 | jq -r '.[].name')
 
           if [[ "${{ inputs.branch }}" = "MAIN" ]]; then
             # NOTE: we have to exclude all other tags that are not main
