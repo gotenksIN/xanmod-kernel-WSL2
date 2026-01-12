@@ -34,14 +34,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - arch: GENERIC_CPU2
-            image-name: bzImage-x64v2
           - arch: GENERIC_CPU3
             image-name: bzImage-x64v3
-          - arch: MSKYLAKE
-            image-name: bzImage-skylake
-          - arch: MZEN3
-            image-name: bzImage-zen3
 
     steps:
       - uses: actions/checkout@main
