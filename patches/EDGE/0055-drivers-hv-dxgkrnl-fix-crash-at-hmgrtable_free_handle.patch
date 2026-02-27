@@ -1,0 +1,32 @@
+From 5bd1ad1abff8a937cbbeb965c797d56e1ebdeb5e Mon Sep 17 00:00:00 2001
+From: Hideyuki Nagase <hideyukn@microsoft.com>
+Date: Fri, 21 Feb 2025 18:16:53 +0000
+Subject: [PATCH] drivers: hv: dxgkrnl: Fix crash at hmgrtable_free_handle
+
+[Nevuly: Forward port to 6.15]
+Signed-off-by: Yang Jeong Hun <onyxclover9931@gmail.com>
+---
+ drivers/hv/dxgkrnl/hmgr.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/hv/dxgkrnl/hmgr.c b/drivers/hv/dxgkrnl/hmgr.c
+index 24101d0091ab3ce413034b09111498e2e728e3f6..059f94307a0e0e1196bd68eb6eeaebe3ad6f2514 100644
+--- a/drivers/hv/dxgkrnl/hmgr.c
++++ b/drivers/hv/dxgkrnl/hmgr.c
+@@ -462,9 +462,14 @@ void hmgrtable_free_handle(struct hmgrtable *table, enum hmgrentry_type t,
+ 		 */
+ 		entry->next_free_index = HMGRTABLE_INVALID_INDEX;
+ 		entry->prev_free_index = table->free_handle_list_tail;
+-		entry = &table->entry_table[table->free_handle_list_tail];
+-		entry->next_free_index = i;
++		if (table->free_handle_list_tail != HMGRTABLE_INVALID_INDEX) {
++			entry = &table->entry_table[table->free_handle_list_tail];
++			entry->next_free_index = i;
++		}
+ 		table->free_handle_list_tail = i;
++		if (table->free_handle_list_head == HMGRTABLE_INVALID_INDEX) {
++			table->free_handle_list_head = i;
++		}
+ 	} else {
+ 		DXG_ERR("Invalid handle to free: %d %x", i, h.v);
+ 	}

@@ -1,0 +1,46 @@
+From 4d649bd7f657d7b1e932ea7147764a62344c4287 Mon Sep 17 00:00:00 2001
+From: Iouri Tarassov <iourit@linux.microsoft.com>
+Date: Wed, 6 Dec 2023 15:45:30 -0800
+Subject: [PATCH] drivers: hv: dxgkrnl: Fix build breaks when switching to 6.6
+ kernel due to hv_driver remove callback change.
+
+The hv_driver remove callback has been updated to return void instead of int.
+dxg_remove_vmbus() in dxgmodule.c needs to be updated to match. See this
+commit for more context:
+96ec2939620c "Drivers: hv: Make remove callback of hyperv driver void returned"
+
+Signed-off-by: Iouri Tarassov <iourit@linux.microsoft.com>
+[Nevuly: Forward port to 6.15]
+Signed-off-by: Yang Jeong Hun <onyxclover9931@gmail.com>
+---
+ drivers/hv/dxgkrnl/dxgmodule.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/drivers/hv/dxgkrnl/dxgmodule.c b/drivers/hv/dxgkrnl/dxgmodule.c
+index 0fafb6167229bea49e23a6d6cfce162e9c33a513..5459bd9b82fb3c07451877ffe0283c961002ee06 100644
+--- a/drivers/hv/dxgkrnl/dxgmodule.c
++++ b/drivers/hv/dxgkrnl/dxgmodule.c
+@@ -803,9 +803,8 @@ static int dxg_probe_vmbus(struct hv_device *hdev,
+ 	return ret;
+ }
+ 
+-static int dxg_remove_vmbus(struct hv_device *hdev)
++static void dxg_remove_vmbus(struct hv_device *hdev)
+ {
+-	int ret = 0;
+ 	struct dxgvgpuchannel *vgpu_channel;
+ 	struct dxgglobal *dxgglobal = dxggbl();
+ 
+@@ -830,12 +829,9 @@ static int dxg_remove_vmbus(struct hv_device *hdev)
+ 	} else {
+ 		/* Unknown device type */
+ 		DXG_ERR("Unknown device type");
+-		ret = -ENODEV;
+ 	}
+ 
+ 	mutex_unlock(&dxgglobal->device_mutex);
+-
+-	return ret;
+ }
+ 
+ MODULE_DEVICE_TABLE(vmbus, dxg_vmbus_id_table);

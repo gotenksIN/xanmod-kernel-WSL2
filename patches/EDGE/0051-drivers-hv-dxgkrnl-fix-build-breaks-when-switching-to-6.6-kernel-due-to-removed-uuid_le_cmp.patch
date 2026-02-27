@@ -1,0 +1,61 @@
+From 0da95fa4f4e5e8c3c3abec2bf8204fe0316341df Mon Sep 17 00:00:00 2001
+From: Iouri Tarassov <iourit@linux.microsoft.com>
+Date: Wed, 6 Dec 2023 15:52:11 -0800
+Subject: [PATCH] drivers: hv: dxgkrnl: Fix build breaks when switching to 6.6
+ kernel due to removed uuid_le_cmp
+
+uuid_le_cmp was removed and needs to be replaced by guid_equal. The
+relevant upstream commits are:
+1fb1ea0d9cb8 "mei: Move uuid.h to the MEI namespace"
+f5b3c341a46e "mei: Move uuid_le_cmp() to its only user"
+5e6a51787fef "uuid: Decouple guid_t and uuid_le types and respective macros"
+
+Signed-off-by: Iouri Tarassov <iourit@linux.microsoft.com>
+[Nevuly: Forward port to 6.15]
+Signed-off-by: Yang Jeong Hun <onyxclover9931@gmail.com>
+---
+ drivers/hv/dxgkrnl/dxgmodule.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
+
+diff --git a/drivers/hv/dxgkrnl/dxgmodule.c b/drivers/hv/dxgkrnl/dxgmodule.c
+index 5459bd9b82fb3c07451877ffe0283c961002ee06..e3ac70df1b6fa6ea5ac6081d072c3c949dabf4d7 100644
+--- a/drivers/hv/dxgkrnl/dxgmodule.c
++++ b/drivers/hv/dxgkrnl/dxgmodule.c
+@@ -762,7 +762,7 @@ static int dxg_probe_vmbus(struct hv_device *hdev,
+ 
+ 	mutex_lock(&dxgglobal->device_mutex);
+ 
+-	if (uuid_le_cmp(hdev->dev_type, dxg_vmbus_id_table[0].guid) == 0) {
++	if (guid_equal(&hdev->dev_type, &dxg_vmbus_id_table[0].guid)) {
+ 		/* This is a new virtual GPU channel */
+ 		guid_to_luid(&hdev->channel->offermsg.offer.if_instance, &luid);
+ 		DXG_TRACE("vGPU channel: %pUb",
+@@ -777,8 +777,7 @@ static int dxg_probe_vmbus(struct hv_device *hdev,
+ 		list_add_tail(&vgpuch->vgpu_ch_list_entry,
+ 			      &dxgglobal->vgpu_ch_list_head);
+ 		dxgglobal_start_adapters();
+-	} else if (uuid_le_cmp(hdev->dev_type,
+-		   dxg_vmbus_id_table[1].guid) == 0) {
++	} else if (guid_equal(&hdev->dev_type, &dxg_vmbus_id_table[1].guid)) {
+ 		/* This is the global Dxgkgnl channel */
+ 		DXG_TRACE("Global channel: %pUb",
+ 			 &hdev->channel->offermsg.offer.if_instance);
+@@ -810,7 +809,7 @@ static void dxg_remove_vmbus(struct hv_device *hdev)
+ 
+ 	mutex_lock(&dxgglobal->device_mutex);
+ 
+-	if (uuid_le_cmp(hdev->dev_type, dxg_vmbus_id_table[0].guid) == 0) {
++	if (guid_equal(&hdev->dev_type, &dxg_vmbus_id_table[0].guid)) {
+ 		DXG_TRACE("Remove virtual GPU channel");
+ 		dxgglobal_stop_adapter_vmbus(hdev);
+ 		list_for_each_entry(vgpu_channel,
+@@ -822,8 +821,7 @@ static void dxg_remove_vmbus(struct hv_device *hdev)
+ 				break;
+ 			}
+ 		}
+-	} else if (uuid_le_cmp(hdev->dev_type,
+-		   dxg_vmbus_id_table[1].guid) == 0) {
++	} else if (guid_equal(&hdev->dev_type, &dxg_vmbus_id_table[1].guid)) {
+ 		DXG_TRACE("Remove global channel device");
+ 		dxgglobal_destroy_global_channel();
+ 	} else {

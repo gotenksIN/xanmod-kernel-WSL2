@@ -1,0 +1,25 @@
+From d312ff49983f5fbcaba511915284035633a6bc0a Mon Sep 17 00:00:00 2001
+From: Mitchell Levy <levymitchell0@gmail.com>
+Date: Fri, 28 Mar 2025 11:28:56 -0700
+Subject: [PATCH] Include `linux/types.h` in `d3dkmthk.h`
+
+Signed-off-by: Mitchell Levy <levymitchell0@gmail.com>
+[Nevuly: Forward port to 6.15]
+Signed-off-by: Yang Jeong Hun <onyxclover9931@gmail.com>
+---
+ include/uapi/misc/d3dkmthk.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/uapi/misc/d3dkmthk.h b/include/uapi/misc/d3dkmthk.h
+index db40e8ff40b0bba9c9d0026a9ac5f437bb04db5c..1ef12c8982e8ac18037ec690e97e78234def75f8 100644
+--- a/include/uapi/misc/d3dkmthk.h
++++ b/include/uapi/misc/d3dkmthk.h
+@@ -14,6 +14,8 @@
+ #ifndef _D3DKMTHK_H
+ #define _D3DKMTHK_H
+ 
++#include <linux/types.h>
++
+ /*
+  * This structure matches the definition of D3DKMTHANDLE in Windows.
+  * The handle is opaque in user mode. It is used by user mode applications to
