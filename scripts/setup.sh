@@ -27,7 +27,7 @@ while true; do
       BRANCH="$2"
       shift 2
       # check if branch is LTS or MAIN
-      if [ "$BRANCH" != "LTS" ] && [ "$BRANCH" != "MAIN" ]; then
+      if [ "$BRANCH" != "LTS" ] && [ "$BRANCH" != "MAIN" ] && [ "$BRANCH" != "EDGE" ]; then
         echo "Invalid branch: $BRANCH"
         exit 2
       fi

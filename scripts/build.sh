@@ -3,7 +3,7 @@
 usage() {
 	echo "Usage: build.sh [options]"
 	echo "Options:"
-	echo "  -b|--branch <LTS|MAIN>  - Specify the Xanmod kernel branch to build.  (Default: MAIN)"
+	echo "  -b|--branch <LTS|MAIN|EDGE>  - Specify the Xanmod kernel branch to build.  (Default: MAIN)"
 	echo "  -j|--jobs <num>         - Specify the number of jobs to use for parallel compilation.  (Default: $(nproc))"
 	echo "  -h                      - Show this help message."
 }
@@ -23,8 +23,8 @@ while true; do
 	'-b'|'--branch')
 		BRANCH="$2"
 		shift 2
-		# check if branch is LTS or MAIN
-		if [ "$BRANCH" != "LTS" ] && [ "$BRANCH" != "MAIN" ]; then
+		# check if branch is LTS ,MAIN or EDGE
+		if [ "$BRANCH" != "LTS" ] && [ "$BRANCH" != "MAIN" ] && [ "$BRANCH" != "EDGE" ]; then
           echo "Invalid branch: $BRANCH"
           exit 2
         fi
