@@ -61,6 +61,6 @@ LOGICAL_CORES=${LOGICAL_CORES:-$(nproc)}
 echo -e "Using $LOGICAL_CORES jobs for $BRANCH build..."
 if [ "$BRANCH" = "MAIN" ]; then
 	make CC='ccache clang -Qunused-arguments -fcolor-diagnostics' LLVM=1 LLVM_IAS=1 -j$LOGICAL_CORES
-elif [ "$BRANCH" = "LTS" ]; then
+else
 	make LLVM=1 LLVM_IAS=1 -j$LOGICAL_CORES
 fi

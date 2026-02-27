@@ -7,7 +7,7 @@ usage() {
   echo "Usage: $0 [options]"
   echo "Options:"
   echo "  -a|--arch <architecture>  - Specify the architecture to build. (Default: GENERIC_CPU3)"
-  echo "  --branch <LTS|MAIN>       - Specify the Xanmod kernel branch to build.  (Default: MAIN)"
+  echo "  --branch <LTS|MAIN|EDGE>       - Specify the Xanmod kernel branch to build.  (Default: MAIN)"
   echo "  --no-download             - Don't download kernel source, assume it's already in ./linux"
   echo "  -h|--help                 - Show this help message."
 }
